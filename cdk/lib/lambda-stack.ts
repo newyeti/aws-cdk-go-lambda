@@ -14,13 +14,12 @@ export class LambdaStack extends cdk.Stack {
 
     const table = new dynamodb.Table(this, 'Todo', {
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-      // sortKey: { name: 'createdOn', type: dynamodb.AttributeType.STRING },
       tableName: 'todo',
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
     });
 
     this.todoLambda = new go.GoFunction(this, 'TodoFuntion', {
-      entry: '../function',
+      entry: '../function/todo',
       runtime: Runtime.PROVIDED_AL2023,
       logRetention: RetentionDays.ONE_WEEK,
       environment: {
