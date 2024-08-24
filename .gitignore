@@ -24,11 +24,11 @@ go.work.sum
 # env file
 .env
 
-*.js
-!jest.config.js
-*.d.ts
+infra/*.js
+infra/!jest.config.js
+infra/*.d.ts
 infra/node_modules
 
 # CDK asset staging directory
-.cdk.staging
-cdk.out
+infra/.cdk.staging
+infra/cdk.out
