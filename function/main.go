@@ -17,13 +17,15 @@ func init() {
 
 	r := gin.Default()
 	
-	r.POST("/todo", CreateTodo)
+	r.POST("/todo", CreateHandler)
 
-	r.GET("/todo/:id", GetTodo)
+	r.GET("/todo", GetAllHandler)
 
-	r.PUT("/todo/:id", UpdateTodo)
+	r.GET("/todo/:id", GetHandler)
 
-	r.DELETE("/todo/:id", DeleteTodo)
+	r.PUT("/todo/:id", UpdateHandler)
+
+	r.DELETE("/todo/:id", DeleteHandler)
 
 	ginLambda = ginadapter.New(r)
 }
