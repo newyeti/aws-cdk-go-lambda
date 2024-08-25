@@ -6,7 +6,8 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 
 interface ApiGatewayStackProps extends cdk.StackProps {
   userPool: cognito.UserPool;
-  lambdaFunction: lambda.Function;
+  authFunction: lambda.Function;
+  todoFunction: lambda.Function;
 }
 
 export class ApiGatewayStack extends cdk.Stack {
@@ -23,14 +24,20 @@ export class ApiGatewayStack extends cdk.Stack {
     );
 
     const api = new apigateway.LambdaRestApi(this, 'TodoApi', {
-      handler: props.lambdaFunction,
+      handler: props.todoFunction,
       proxy: false,
     });
+
+    const auth = api.root.addResource('auth');
+    auth.addMethod(
+      'POST',
+      new apigateway.LambdaIntegration(props.authFunction)
+    );
 
     const todos = api.root.addResource('todo');
     todos.addMethod(
       'POST',
-      new apigateway.LambdaIntegration(props.lambdaFunction),
+      new apigateway.LambdaIntegration(props.todoFunction),
       {
         authorizer: authorizer,
         authorizationType: apigateway.AuthorizationType.COGNITO,
@@ -38,7 +45,7 @@ export class ApiGatewayStack extends cdk.Stack {
     );
     todos.addMethod(
       'GET',
-      new apigateway.LambdaIntegration(props.lambdaFunction),
+      new apigateway.LambdaIntegration(props.todoFunction),
       {
         authorizer: authorizer,
         authorizationType: apigateway.AuthorizationType.COGNITO,
@@ -48,7 +55,7 @@ export class ApiGatewayStack extends cdk.Stack {
     const todosWithId = todos.addResource('{id}');
     todosWithId.addMethod(
       'GET',
-      new apigateway.LambdaIntegration(props.lambdaFunction),
+      new apigateway.LambdaIntegration(props.todoFunction),
       {
         authorizer: authorizer,
         authorizationType: apigateway.AuthorizationType.COGNITO,
@@ -56,7 +63,7 @@ export class ApiGatewayStack extends cdk.Stack {
     );
     todosWithId.addMethod(
       'PUT',
-      new apigateway.LambdaIntegration(props.lambdaFunction),
+      new apigateway.LambdaIntegration(props.todoFunction),
       {
         authorizer: authorizer,
         authorizationType: apigateway.AuthorizationType.COGNITO,
@@ -64,7 +71,7 @@ export class ApiGatewayStack extends cdk.Stack {
     );
     todosWithId.addMethod(
       'DELETE',
-      new apigateway.LambdaIntegration(props.lambdaFunction),
+      new apigateway.LambdaIntegration(props.todoFunction),
       {
         authorizer: authorizer,
         authorizationType: apigateway.AuthorizationType.COGNITO,
